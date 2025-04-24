@@ -44,6 +44,7 @@ jobs:
           cd ../../../
           sed -i "s/GPR_USER/${GPR_USER}/gi" gradle.properties
           sed -i "s/GPR_KEY/${GPR_KEY}/gi" gradle.properties
+          chmod +x gradlew
           ./gradlew shadowJar
           ./gradlew publish -PmySecureRepositoryUsername=${MAVEN_SERVER_USERNAME} -PmySecureRepositoryPassword=${MAVEN_SERVER_PASSWORD}
       - name: Deploy lambda
