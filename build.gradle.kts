@@ -89,7 +89,7 @@ publishing {
         create<MavenPublication>("mavenJar") {
             from(components["java"])
             groupId = "ar.com.intrale"
-            artifactId = "backend"
+            artifactId = "users"
             version = "0.0.1"
         }
     }
