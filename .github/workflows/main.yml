@@ -1,0 +1,56 @@
+name: CI users
+
+on:
+  push:
+    branches: [ main ]
+  repository_dispatch:
+jobs:
+  deploy-lambda:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Download source code
+        uses: actions/checkout@v4
+      - name: JDK Setup
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11' # The JDK version to make available on the path.
+          distribution: 'temurin'
+          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+          architecture: x64 # (x64 or x86) - defaults to x64
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Build with Gradle
+        env:
+          AVAILABLE_BUISNESS: ${{ secrets.AVAILABLE_BUISNESS }}
+          REGION_VALUE: ${{ secrets.REGION }}
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+          USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          MAVEN_SERVER_USERNAME: ${{ secrets.MAVEN_SERVER_USERNAME }}
+          MAVEN_SERVER_PASSWORD: ${{ secrets.MAVEN_SERVER_PASSWORD }}
+          GPR_USER: ${{ secrets.GPR_USER }}
+          GPR_KEY: ${{ secrets.GPR_KEY }}
+        run: |
+          cd ./src/main/resources/
+          sed -i "s/AVAILABLE_BUISNESS/${AVAILABLE_BUISNESS}/gi" application.conf
+          sed -i "s/REGION_VALUE/${REGION_VALUE}/gi" application.conf
+          sed -i "s/ACCESS_KEY_ID/${ACCESS_KEY_ID}/gi" application.conf
+          ESCAPED_SECRET=$(printf '%s\n' "$SECRET_ACCESS_KEY" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/SECRET_ACCESS_KEY/${ESCAPED_SECRET}/gi" application.conf
+          sed -i "s/USER_POOL_ID/${USER_POOL_ID}/gi" application.conf
+          sed -i "s/CLIENT_ID/${CLIENT_ID}/gi" application.conf
+          cd ../../../
+          sed -i "s/GPR_USER/${GPR_USER}/gi" gradle.properties
+          sed -i "s/GPR_KEY/${GPR_KEY}/gi" gradle.properties
+          ./gradlew shadowJar
+          ./gradlew publish -PmySecureRepositoryUsername=${MAVEN_SERVER_USERNAME} -PmySecureRepositoryPassword=${MAVEN_SERVER_PASSWORD}
+      - name: Deploy lambda
+        uses: yvesgurcan/deploy-lambda-function@master
+        with:
+          package: ./build/libs/users-all.jar
+          function-name: kotlinTest
+          AWS_REGION: ${{ secrets.AWS_DEPLOY_REGION }}
+          AWS_SECRET_ID: ${{ secrets.AWS_DEPLOYER_SECRET_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_DEPLOYER_SECRET_KEY }}
