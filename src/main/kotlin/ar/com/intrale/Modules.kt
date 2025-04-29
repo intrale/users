@@ -47,21 +47,15 @@ val appModule = DI.Module("appModule") {
         }
     }
 
-
-
     bind <Logger> {
         singleton { LoggerFactory.getLogger("AppLogger") }
     }
 
     bind<Function> (tag="signup") {
-        singleton {   SignUp(instance(), instance(), instance()) }
+        singleton  { SignUp(instance<Config>(tag = "config") as UsersConfig, instance(), instance()) }
     }
     bind<Function> (tag="signin") {
-        singleton {   SignIn(instance(), instance(), instance()) }
-    }
-
-    bindSingleton <Function> (tag = "signin2") {
-        SignIn(instance(), instance(), instance())
+        singleton {   SignIn(instance<Config>(tag = "config") as UsersConfig, instance(), instance()) }
     }
 
 }

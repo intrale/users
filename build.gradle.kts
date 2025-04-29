@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "ar.com.intrale"
-version = "0.0.4"
+version = "0.0.5"
 
 val kodeinVersion = "7.22.0"
 val canardVersion = "1.2.0"
@@ -81,7 +81,7 @@ dependencies {
     implementation("net.datafaker:datafaker:2.4.2")
 
     // Backend Intrale
-    implementation("ar.com.intrale:backend:0.0.7")
+    implementation("ar.com.intrale:backend:0.0.8")
 }
 
 publishing {
@@ -90,7 +90,7 @@ publishing {
             from(components["java"])
             groupId = "ar.com.intrale"
             artifactId = "users"
-            version = "0.0.4"
+            version = "0.0.5"
         }
     }
     repositories {
