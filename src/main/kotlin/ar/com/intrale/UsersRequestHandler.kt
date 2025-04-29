@@ -9,7 +9,7 @@ class UsersRequestHandler : LambdaRequestHandler() {
 
     // The request limit most be assigned on Api Gateway
     @OptIn(ExperimentalEncodingApi::class)
-    override fun handleRequest(requestEvent: APIGatewayProxyRequestEvent?, context: Context?): APIGatewayProxyResponseEvent  = APIGatewayProxyResponseEvent().apply {
-        handle(appModule, requestEvent, context)
+    override fun handleRequest(requestEvent: APIGatewayProxyRequestEvent?, context: Context?): APIGatewayProxyResponseEvent {
+        return handle(appModule, requestEvent, context)
     }
 }
