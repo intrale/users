@@ -81,7 +81,7 @@ dependencies {
     implementation("net.datafaker:datafaker:2.4.2")
 
     // Backend Intrale
-    implementation("ar.com.intrale:backend:0.0.1")
+    implementation("ar.com.intrale:backend:0.0.6")
 }
 
 publishing {

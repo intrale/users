@@ -4,6 +4,7 @@ import com.typesafe.config.ConfigFactory
 import net.datafaker.Faker
 import org.kodein.di.DI
 import org.kodein.di.bind
+import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.kodein.di.singleton
 import org.slf4j.Logger
@@ -46,6 +47,8 @@ val appModule = DI.Module("appModule") {
         }
     }
 
+
+
     bind <Logger> {
         singleton { LoggerFactory.getLogger("AppLogger") }
     }
@@ -55,6 +58,10 @@ val appModule = DI.Module("appModule") {
     }
     bind<Function> (tag="signin") {
         singleton {   SignIn(instance(), instance(), instance()) }
+    }
+
+    bindSingleton <Function> (tag = "signin2") {
+        SignIn(instance(), instance(), instance())
     }
 
 }
