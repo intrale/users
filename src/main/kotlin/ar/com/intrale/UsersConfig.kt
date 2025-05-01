@@ -2,8 +2,12 @@ package ar.com.intrale
 
 data class UsersConfig(
     override val businesses: Set<String>,
-    val region: String,
+    override val region: String,
     val accessKeyId: String,
     val secretAccessKey: String,
-    val awsCognitoUserPoolId: String,
-    val awsCognitoClientId: String) : Config (businesses = businesses)
+    override val awsCognitoUserPoolId: String,
+    override val awsCognitoClientId: String) :
+                            Config (businesses = businesses,
+                                    region = region,
+                                    awsCognitoUserPoolId=awsCognitoUserPoolId,
+                                    awsCognitoClientId=awsCognitoClientId)

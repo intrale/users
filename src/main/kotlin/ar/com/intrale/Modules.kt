@@ -24,7 +24,7 @@ private const val AWS_COGNITO_CLIENT_ID = "aws.cognito.clientId"
 
 val appModule = DI.Module("appModule") {
 
-    bind <Config> (tag="config") {
+    bind <UsersConfig> {
         singleton {
             val configFactory = ConfigFactory.load()
 
@@ -52,10 +52,13 @@ val appModule = DI.Module("appModule") {
     }
 
     bind<Function> (tag="signup") {
-        singleton  { SignUp(instance<Config>(tag = "config") as UsersConfig, instance(), instance()) }
+        singleton  { SignUp(instance(), instance(), instance()) }
     }
     bind<Function> (tag="signin") {
-        singleton {   SignIn(instance<Config>(tag = "config") as UsersConfig, instance(), instance()) }
+        singleton {  SignIn(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="validate") {
+        singleton {  Validate(instance(), instance(), instance()) }
     }
 
 }
