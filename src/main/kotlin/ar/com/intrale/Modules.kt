@@ -10,17 +10,17 @@ import org.kodein.di.singleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-private const val APP_AVAILABLE_BUSINESSES = "app.availableBusinesses"
+private const val APP_AVAILABLE_BUSINESSES = "AVAILABLE_BUISNESS"
 
-private const val AWS_REGION = "aws.region"
+private const val AWS_REGION = "REGION_VALUE"
 
-private const val AWS_ACCESS_KEY_ID = "aws.accessKeyId"
+private const val AWS_ACCESS_KEY_ID = "ACCESS_KEY_ID"
 
-private const val AWS_SECRET_ACCESS_KEY = "aws.secretAccessKey"
+private const val AWS_SECRET_ACCESS_KEY = "SECRET_ACCESS_KEY"
 
-private const val AWS_COGNITO_USER_POOL_ID = "aws.cognito.userPoolId"
+private const val AWS_COGNITO_USER_POOL_ID = "USER_POOL_ID"
 
-private const val AWS_COGNITO_CLIENT_ID = "aws.cognito.clientId"
+private const val AWS_COGNITO_CLIENT_ID = "CLIENT_ID"
 
 val appModule = DI.Module("appModule") {
 
@@ -59,6 +59,12 @@ val appModule = DI.Module("appModule") {
     }
     bind<Function> (tag="validate") {
         singleton {  Validate(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="recovery") {
+        singleton {  PasswordRecovery(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="confirm") {
+        singleton {  ConfirmPasswordRecovery(instance(), instance(), instance()) }
     }
 
 }
