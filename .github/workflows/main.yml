@@ -20,6 +20,36 @@ jobs:
           architecture: x64 # (x64 or x86) - defaults to x64
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+      - name: Read version from version.properties
+        id: read_version
+        run: |
+          version_line=$(grep "^version=" version.properties)
+          current_version=${version_line#version=}
+          echo "current_version=$current_version" >> $GITHUB_OUTPUT
+      - name: Increment minor version
+        id: bump_version
+        run: |
+          IFS='.' read -r major minor patch <<< "${{ steps.read_version.outputs.current_version }}"
+          minor=$((minor + 1))
+          patch=0
+          new_version="$major.$minor.$patch"
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+      - name: Update version.properties file
+        run: |
+          echo "version=${{ steps.bump_version.outputs.new_version }}" > version.properties
+      - name: Set Git user for commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit and push new version
+        run: |
+          git add version.properties
+          git commit -m "Increment minor version to ${{ steps.bump_version.outputs.new_version }}"
+          git tag "${{ steps.bump_version.outputs.new_version }}"
+          git push origin HEAD:main
+          git push origin --tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build with Gradle
         env:
           AVAILABLE_BUISNESS: ${{ secrets.AVAILABLE_BUISNESS }}
