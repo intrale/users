@@ -1,21 +1,44 @@
-val kotlin_version: String by project
-val logback_version: String by project
+import java.util.Properties
+
+// Cargar archivo de versión
+val versionPropsFile = file("version.properties")
+val versionProps = Properties()
+
+versionProps.load(versionPropsFile.inputStream())
+
+// Obtener la versión actual
+val currentVersion = versionProps.getProperty("version") ?: "1.0.0"
+
+// Usar la versión como propiedad del proyecto
+version = currentVersion
+
+// Tarea para incrementar versión
+tasks.register("incrementVersion") {
+    doLast {
+        val parts = currentVersion.split(".").map { it.toInt() }.toMutableList()
+        parts[2] = parts[2] + 1 // incrementar el número de "patch"
+        val newVersion = parts.joinToString(".")
+        versionProps.setProperty("version", newVersion)
+        versionProps.store(versionPropsFile.outputStream(), null)
+        println("Versión actualizada a $newVersion")
+    }
+}
+
+val artifactId = "users"
+group = "ar.com.intrale"
+
+val projectRepo = "https://maven.pkg.github.com/intrale/repo"
+val jetBrainsRepo = "https://packages.jetbrains.team/maven/p/ktls/maven"
+val confluenceRepo = "https://packages.confluent.io/maven"
 
 plugins {
-    kotlin("jvm") version "2.0.20"
-    id("io.ktor.plugin") version "2.3.12"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.shadow)
 
     `maven-publish`   // permite publicar artefactos como .jar
     `java-library`    // opcional, útil si estás creando una librería reutilizable
 }
-
-group = "ar.com.intrale"
-version = "0.0.7"
-
-val kodeinVersion = "7.22.0"
-val canardVersion = "1.2.0"
-val konformVersion = "0.6.1"
 
 application {
     mainClass.set("ar.com.intrale.UsersApplicationKt")
@@ -27,80 +50,69 @@ application {
 repositories {
     maven {
         name = "github"
-        url = uri("https://maven.pkg.github.com/intrale/repo")
+        url = uri(projectRepo)
         credentials {
             username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user") as String?
             password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.key") as String?
         }
     }
-    //maven(url = uri("https://maven.pkg.github.com/intrale/repo"))
     mavenCentral()
-    //Kotless repository
     gradlePluginPortal()
-    maven(url = uri("https://packages.jetbrains.team/maven/p/ktls/maven"))
-    maven {
-        url = uri("https://packages.confluent.io/maven")
-        name = "confluence"
-    }
+    maven(url = uri(jetBrainsRepo))
+    maven (url = uri(confluenceRepo))
 }
 
 dependencies {
 
-    implementation("io.ktor:ktor-server-call-logging-jvm")
-    implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm")
-    implementation("io.ktor:ktor-serialization-gson-jvm")
-    implementation("io.ktor:ktor-server-netty-jvm")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.github.flaxoos:ktor-server-rate-limiting:1.2.10")
-    testImplementation("io.ktor:ktor-server-test-host-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    // Backend
+    implementation(libs.backend)
 
-    //
+    implementation("io.ktor:ktor-serialization-gson-jvm")
+
+    implementation(libs.ktor.server.rate.limiting)
+
+    testImplementation("io.ktor:ktor-server-test-host-jvm")
+    testImplementation(libs.kotlin.test.junit)
 
     // AWS Lambdas
-    implementation(libs.aws.lambda.java.core)
     implementation(libs.aws.lambda.java.events)
     implementation(libs.aws.lambda.java.log4j)
 
-
-    implementation("aws.sdk.kotlin:cognitoidentityprovider:1.2.28")
-    implementation("aws.sdk.kotlin:cognitoidentity:1.2.28")
-    implementation("aws.sdk.kotlin:secretsmanager:1.2.28")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    // AWS Cognito
+    implementation(libs.cognito.identity.provider)
 
     // Validations
-    implementation("io.konform:konform:$konformVersion")
+    implementation(libs.konform)
 
     // Kodein
-    implementation("org.kodein.di:kodein-di:$kodeinVersion")
-    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodeinVersion")
+    implementation(libs.kodein.di.framework.ktor.server.jvm)
 
     // Faker
-    implementation("net.datafaker:datafaker:2.4.2")
+    implementation(libs.datafaker)
 
-    // Backend Intrale
-    implementation("ar.com.intrale:backend:0.1.0")
 }
 
 publishing {
     publications {
         create<MavenPublication>("mavenJar") {
             from(components["java"])
-            groupId = "ar.com.intrale"
-            artifactId = "users"
-            version = "0.0.7"
+            groupId = "$group"
+            artifactId = "$artifactId"
+            version = "$version"
         }
     }
     repositories {
         maven {
             name = "github"
-            url = uri("https://maven.pkg.github.com/intrale/repo")
+            url = uri(projectRepo)
             credentials {
                 username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user") as String?
                 password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.key") as String?
             }
         }
     }
+}
+
+tasks.named("build") {
+    finalizedBy("incrementVersion")
 }

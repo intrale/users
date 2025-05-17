@@ -15,6 +15,11 @@ import io.konform.validation.jsonschema.pattern
 import net.datafaker.Faker
 import org.slf4j.Logger
 
+private const val PROFILE_ATT_NAME = "profile"
+private const val BUSINESS_ATT_NAME = "locale"
+private const val EMAIL_ATT_NAME = "email"
+private const val DEFAULT_PROFILE = "DEFAULT"
+
 class SignUp (val config: UsersConfig, val faker: Faker, val logger: Logger): Function {
 
     override suspend fun execute(business: String, function: String, headers: Map<String, String>, textBody:String): Response {
@@ -42,11 +47,15 @@ class SignUp (val config: UsersConfig, val faker: Faker, val logger: Logger): Fu
 
             val attrs = mutableListOf<AttributeType>()
             attrs.add(AttributeType {
-                this.name = "email"
+                this.name = EMAIL_ATT_NAME
                 this.value = email
             })
             attrs.add(AttributeType {
-                this.name = "profile"
+                this.name = PROFILE_ATT_NAME
+                this.value = DEFAULT_PROFILE
+            })
+            attrs.add(AttributeType {
+                this.name = BUSINESS_ATT_NAME
                 this.value = business
             })
 
@@ -73,11 +82,14 @@ class SignUp (val config: UsersConfig, val faker: Faker, val logger: Logger): Fu
                             userPoolId = config.awsCognitoUserPoolId
                             username = body.email
                         })
-                        val businesses = user.userAttributes?.find { it.name == "profile" }?.value
+                        val businesses = user.userAttributes?.find { it.name == PROFILE_ATT_NAME }?.value
                         logger.info("businesses: $businesses")
                         if (businesses?.contains(business) == true){
                             return ExceptionResponse(e.message ?: "Internal Server Error")
                         }
+
+                        //TODO: Tendriamos que actualizar por un lado la informacion del negocio al cual esta habilitado el usuario
+                        // y por otro lado la informacion del perfil del usuario
 
                         //Actualizamos la informacion de negocio para el usuario
                         val updateUserAttributesResponse = identityProviderClient.adminUpdateUserAttributes (
@@ -86,12 +98,11 @@ class SignUp (val config: UsersConfig, val faker: Faker, val logger: Logger): Fu
                                 username = body.email
                                 userAttributes = listOf(
                                     AttributeType {
-                                        name = "profile"
+                                        name = BUSINESS_ATT_NAME
                                         value = businesses + "," + business
                                     }
                                 )
                             })
-
 
                     }
                 }

@@ -1,9 +1,64 @@
 [versions]
-com-amazonaws-aws-lambda-java-core = "1.2.1"
+# Kotlin
+kotlin="2.0.20"
+
+# Backend
+backend = "0.4.0"
+
+# AWS
 com-amazonaws-aws-lambda-java-events = "3.11.4"
 com-amazonaws-aws-lambda-java-log4j = "1.0.1"
 
+# AWS Cognito
+aws-sdk-kotlin-cognito="1.2.28"
+
+# Validations
+konform = "0.6.1"
+
+# Dependency Injection
+kodein = "7.22.0"
+
+# Faker
+datafaker = "2.4.2"
+
+# Ktor
+ktor = "2.3.12"
+
+# Ktor Rate Limit
+ktor-server-rate-limiting = "1.2.10"
+
+# Shadow
+shadow = "8.1.1"
+
+
 [libraries]
-aws-lambda-java-core = { module = "com.amazonaws:aws-lambda-java-core", version.ref = "com-amazonaws-aws-lambda-java-core" }
+# Backend
+backend = { module = "ar.com.intrale:backend", version.ref = "backend" }
+
+# Kotlin
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+
+# AWS
 aws-lambda-java-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "com-amazonaws-aws-lambda-java-events" }
 aws-lambda-java-log4j = { module = "com.amazonaws:aws-lambda-java-log4j", version.ref = "com-amazonaws-aws-lambda-java-log4j" }
+
+# AWS Cognito
+cognito-identity-provider = { module = "aws.sdk.kotlin:cognitoidentityprovider", version.ref = "aws-sdk-kotlin-cognito" }
+
+# Validations
+konform = { module = "io.konform:konform", version.ref = "konform" }
+
+# Dependency Injection
+kodein-di = { module = "org.kodein.di:kodein-di", version.ref = "kodein" }
+kodein-di-framework-ktor-server-jvm = { module = "org.kodein.di:kodein-di-framework-ktor-server-jvm", version.ref = "kodein" }
+
+# Faker
+datafaker = { module = "net.datafaker:datafaker", version.ref = "datafaker" }
+
+# Ktor Rate Limit
+ktor-server-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version.ref = "ktor-server-rate-limiting" }
+
+[plugins]
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
