@@ -67,28 +67,45 @@ dependencies {
     // Backend
     implementation(libs.backend)
 
+    implementation("io.ktor:ktor-server-call-logging-jvm")
+    implementation("io.ktor:ktor-server-core-jvm")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-gson-jvm")
-
-    implementation(libs.ktor.server.rate.limiting)
+    implementation("io.ktor:ktor-server-netty-jvm")
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation(libs.kotlin.test.junit)
 
+    implementation(libs.logback.classic)
+    implementation(libs.ktor.server.rate.limiting)
+
     // AWS Lambdas
+    implementation(libs.aws.lambda.java.core)
     implementation(libs.aws.lambda.java.events)
     implementation(libs.aws.lambda.java.log4j)
 
     // AWS Cognito
     implementation(libs.cognito.identity.provider)
+    implementation(libs.cognito.identity)
+    implementation(libs.secretsmanager)
+
+    // serialization
+    implementation(libs.kotlinx.serialization.json)
 
     // Validations
     implementation(libs.konform)
 
-    // Kodein
+    // Dependency Injection
+    implementation(libs.kodein.di)
     implementation(libs.kodein.di.framework.ktor.server.jvm)
 
     // Faker
     implementation(libs.datafaker)
+
+    //JWT
+    implementation(libs.java.jwt)
+    implementation(libs.jwks.rsa)
+
 
 }
 

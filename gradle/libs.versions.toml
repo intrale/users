@@ -6,11 +6,17 @@ kotlin="2.0.20"
 backend = "0.4.0"
 
 # AWS
+com-amazonaws-aws-lambda-java-core = "1.2.1"
 com-amazonaws-aws-lambda-java-events = "3.11.4"
 com-amazonaws-aws-lambda-java-log4j = "1.0.1"
-
 # AWS Cognito
 aws-sdk-kotlin-cognito="1.2.28"
+
+# logback
+logback-classic="1.5.18"
+
+# serialization
+kotlinx-serialization-json = "1.7.3"
 
 # Validations
 konform = "0.6.1"
@@ -20,6 +26,10 @@ kodein = "7.22.0"
 
 # Faker
 datafaker = "2.4.2"
+
+# JWT
+java-jwt = "4.4.0"
+jwks-rsa = "0.22.0"
 
 # Ktor
 ktor = "2.3.12"
@@ -39,11 +49,20 @@ backend = { module = "ar.com.intrale:backend", version.ref = "backend" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
 # AWS
+aws-lambda-java-core = { module = "com.amazonaws:aws-lambda-java-core", version.ref = "com-amazonaws-aws-lambda-java-core" }
 aws-lambda-java-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "com-amazonaws-aws-lambda-java-events" }
 aws-lambda-java-log4j = { module = "com.amazonaws:aws-lambda-java-log4j", version.ref = "com-amazonaws-aws-lambda-java-log4j" }
 
 # AWS Cognito
 cognito-identity-provider = { module = "aws.sdk.kotlin:cognitoidentityprovider", version.ref = "aws-sdk-kotlin-cognito" }
+cognito-identity = { module = "aws.sdk.kotlin:cognitoidentity", version.ref = "aws-sdk-kotlin-cognito" }
+secretsmanager = { module = "aws.sdk.kotlin:secretsmanager", version.ref = "aws-sdk-kotlin-cognito" }
+
+# logback
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-classic" }
+
+# serialization
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 
 # Validations
 konform = { module = "io.konform:konform", version.ref = "konform" }
@@ -54,6 +73,10 @@ kodein-di-framework-ktor-server-jvm = { module = "org.kodein.di:kodein-di-framew
 
 # Faker
 datafaker = { module = "net.datafaker:datafaker", version.ref = "datafaker" }
+
+# JWT
+java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }
+jwks-rsa = { module = "com.auth0:jwks-rsa", version.ref = "jwks-rsa" }
 
 # Ktor Rate Limit
 ktor-server-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version.ref = "ktor-server-rate-limiting" }
