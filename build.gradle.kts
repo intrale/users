@@ -106,6 +106,16 @@ dependencies {
     implementation(libs.java.jwt)
     implementation(libs.jwks.rsa)
 
+    // DynamoDB
+    implementation("software.amazon.awssdk:dynamodb:2.25.28")
+    implementation("software.amazon.awssdk:dynamodb-enhanced:2.25.28")
+    implementation("software.amazon.awssdk:auth:2.25.28")
+    implementation("software.amazon.awssdk:regions:2.25.28")
+
+
+    // Two Factor
+    implementation("com.eatthepath:java-otp:0.4.0")
+    implementation("commons-codec:commons-codec:1.15")
 
 }
 

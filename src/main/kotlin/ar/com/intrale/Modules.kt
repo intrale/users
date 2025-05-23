@@ -55,6 +55,9 @@ val appModule = DI.Module("appModule") {
     bind<Function> (tag="signup") {
         singleton  { SignUp(instance(), instance(), instance()) }
     }
+    bind<Function> (tag="signupPlatformAdmin") {
+        singleton  { SignUpPlatformAdmin(instance(), instance(), instance()) }
+    }
     bind<Function> (tag="signin") {
         singleton {  SignIn(instance(), instance(), instance()) }
     }
@@ -66,6 +69,15 @@ val appModule = DI.Module("appModule") {
     }
     bind<Function> (tag="confirm") {
         singleton {  ConfirmPasswordRecovery(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="profiles") {
+        singleton {  Profiles(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="2fasetup") {
+        singleton {  TwoFactorSetup(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="2faverify") {
+        singleton {  TwoFactorVerify(instance(), instance(), instance()) }
     }
 
 }

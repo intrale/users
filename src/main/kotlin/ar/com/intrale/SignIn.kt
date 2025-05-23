@@ -132,7 +132,7 @@ class SignIn(val config: UsersConfig, val faker: Faker, val logger: Logger) : Fu
                     username = body.email
                 })
 
-                val businesses = user.userAttributes?.find { it.name == "profile" }?.value
+                val businesses = user.userAttributes?.find { it.name == BUSINESS_ATT_NAME }?.value
                 logger.info("businesses: $businesses")
                 if (businesses?.contains(business) == false){
                     return UnauthorizeExeption()
