@@ -78,6 +78,8 @@ dependencies {
 
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.rate.limiting)
+    implementation("io.ktor:ktor-server-openapi-jvm")
+    implementation("io.ktor:ktor-server-swagger-jvm")
 
     // AWS Lambdas
     implementation(libs.aws.lambda.java.core)
