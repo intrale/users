@@ -35,6 +35,7 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.shadow)
+    id("jacoco")
 
     `maven-publish`   // permite publicar artefactos como .jar
     `java-library`    // opcional, útil si estás creando una librería reutilizable
@@ -78,6 +79,8 @@ dependencies {
 
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.rate.limiting)
+    implementation("io.ktor:ktor-server-openapi-jvm")
+    implementation("io.ktor:ktor-server-swagger-jvm")
 
     // AWS Lambdas
     implementation(libs.aws.lambda.java.core)
@@ -142,4 +145,30 @@ publishing {
 
 tasks.named("build") {
     finalizedBy("incrementVersion")
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(false)
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.95".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestCoverageVerification)
 }
