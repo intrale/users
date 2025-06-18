@@ -3,7 +3,7 @@ package ar.com.intrale
 import net.datafaker.Faker
 import org.slf4j.Logger
 
-class Validate(override val config: UsersConfig, val faker: Faker, override val logger: Logger) :
+class Validate(override val config: UsersConfig, override val logger: Logger) :
     SecuredFunction(config=config, logger=logger ) {
 
 

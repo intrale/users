@@ -1,27 +1,19 @@
 package ar.com.intrale
 
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
 import aws.sdk.kotlin.services.cognitoidentityprovider.getUser
-import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator
 import com.google.gson.Gson
 import io.konform.validation.Validation
-import io.konform.validation.Validation.Companion.invoke
 import io.konform.validation.ValidationResult
-import net.datafaker.Faker
 import org.apache.commons.codec.binary.Base32
 import org.slf4j.Logger
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema
-import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import java.security.SecureRandom
 import java.time.Instant
 import javax.crypto.spec.SecretKeySpec
 
-class TwoFactorVerify (override val config: UsersConfig, val faker: Faker, override val logger: Logger) :
+class TwoFactorVerify (override val config: UsersConfig, override val logger: Logger, val cognito: CognitoIdentityProviderClient, val tableUsers: DynamoDbTable<User>) :
     SecuredFunction(config=config, logger=logger ) {
 
 
@@ -59,27 +51,9 @@ class TwoFactorVerify (override val config: UsersConfig, val faker: Faker, overr
             val response = requestValidation(body)
             if (response!=null) return response
 
-            val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
-                .region(Region.of(config.region))
-                .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(AwsBasicCredentials.create(config.accessKeyId, config.secretAccessKey)))
-                .build()
-
-            logger.debug("dynamoDbClient ok")
-            val enhancedClient = DynamoDbEnhancedClient.builder()
-                .dynamoDbClient(dynamoDbClient)
-                .build()
-
-            logger.debug("enhancedClient ok")
-            val table = enhancedClient.table("users", TableSchema.fromBean(User::class.java))
 
             logger.debug("checking accessToken")
-            CognitoIdentityProviderClient {
-                region = config.region
-                credentialsProvider = StaticCredentialsProvider(Credentials(
-                    accessKeyId = config.accessKeyId,
-                    secretAccessKey = config.secretAccessKey
-                ))
-            }.use { identityProviderClient ->
+            cognito.use { identityProviderClient ->
                 val response = identityProviderClient.getUser {
                     this.accessToken = headers["Authorization"]
                 }
@@ -93,7 +67,7 @@ class TwoFactorVerify (override val config: UsersConfig, val faker: Faker, overr
                         email = email,
                     )
                     logger.debug("getting user $user")
-                    user = table.getItem(user)
+                    user = tableUsers.getItem(user)
 
                     val generator = TimeBasedOneTimePasswordGenerator()
                     val key = SecretKeySpec(Base32().decode(user.secret), "HmacSHA1")

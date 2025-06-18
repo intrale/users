@@ -19,7 +19,7 @@ import io.konform.validation.ValidationResult
 import net.datafaker.Faker
 import org.slf4j.Logger
 
-class ConfirmPasswordRecovery(val config: UsersConfig, val faker: Faker, val logger: Logger) : Function {
+class ConfirmPasswordRecovery(val config: UsersConfig, val logger: Logger, val cognito: CognitoIdentityProviderClient) : Function {
 
 
     fun requestValidation(body:ConfirmPasswordRecoveryRequest): Response? {
@@ -53,13 +53,7 @@ class ConfirmPasswordRecovery(val config: UsersConfig, val faker: Faker, val log
         // Se intenta realizar el signin normalmente contra el proveedor de autenticacion
         try {
             logger.info("Se intenta realizar el signin normalmente contra el proveedor de autenticacion")
-            CognitoIdentityProviderClient {
-                region = config.region
-                credentialsProvider = StaticCredentialsProvider(Credentials(
-                    accessKeyId = config.accessKeyId,
-                    secretAccessKey = config.secretAccessKey
-                ))
-            }.use { identityProviderClient ->
+            cognito.use { identityProviderClient ->
 
                 val confirmPassword = ConfirmForgotPasswordRequest {
                     clientId = config.awsCognitoClientId

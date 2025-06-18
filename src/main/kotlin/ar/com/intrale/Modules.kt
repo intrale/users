@@ -1,5 +1,8 @@
 package ar.com.intrale
 
+import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
+import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
+import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
 import com.typesafe.config.ConfigFactory
 import net.datafaker.Faker
 import org.kodein.di.DI
@@ -8,6 +11,12 @@ import org.kodein.di.instance
 import org.kodein.di.singleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 private const val LOCAL_APP_AVAILABLE_BUSINESSES = "AVAILABLE_BUISNESS"
 private const val LOCAL_AWS_REGION = "REGION_VALUE"
@@ -25,14 +34,75 @@ private const val AWS_COGNITO_CLIENT_ID = "aws.cognito.clientId"
 
 val appModule = DI.Module("appModule") {
 
+    bind<CognitoIdentityProviderClient> {
+        singleton {
+            val config = instance<UsersConfig>()
+
+            CognitoIdentityProviderClient {
+                region = config.region
+                credentialsProvider = StaticCredentialsProvider(Credentials(
+                    accessKeyId = config.accessKeyId,
+                    secretAccessKey = config.secretAccessKey
+                ))
+            }
+        }
+    }
+
+    bind <DynamoDbClient> {
+        singleton {
+            val configFactory = ConfigFactory.load()
+
+            DynamoDbClient.builder()
+                .region(Region.of(System.getenv(LOCAL_AWS_REGION) ?: configFactory.getString(AWS_REGION)))
+                .credentialsProvider(
+                    software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(
+                            System.getenv(LOCAL_AWS_ACCESS_KEY_ID) ?: configFactory.getString(AWS_ACCESS_KEY_ID),
+                            System.getenv(LOCAL_AWS_SECRET_ACCESS_KEY) ?: configFactory.getString(AWS_SECRET_ACCESS_KEY))
+                    )
+                )
+                .build()
+        }
+    }
+
+    bind <DynamoDbEnhancedClient> {
+        singleton {
+            DynamoDbEnhancedClient.builder()
+                .dynamoDbClient(instance())
+                .build()
+        }
+    }
+
+    bind <DynamoDbTable<Business>>{
+        singleton {
+            instance<DynamoDbEnhancedClient>().table("business", TableSchema.fromBean(Business::class.java))
+        }
+    }
+
+    bind <DynamoDbTable<User>>{
+        singleton {
+            instance<DynamoDbEnhancedClient>().table("users", TableSchema.fromBean(User::class.java))
+        }
+    }
+
+    bind <DynamoDbTable<UserBusinessProfile>>{
+        singleton {
+            instance<DynamoDbEnhancedClient>().table("userbusinessprofile", TableSchema.fromBean(UserBusinessProfile::class.java))
+        }
+    }
+
     bind <UsersConfig> {
         singleton {
             val configFactory = ConfigFactory.load()
 
+            val acceptedBusinessNames: Set<String> = instance<DynamoDbTable<Business>>().scan()
+                .items()
+                .filter { it.state == BusinessState.APPROVED }
+                .mapNotNull { it.name }
+                .toSet() + setOf("intrale")
+
             UsersConfig(
-                businesses = if (System.getenv(LOCAL_APP_AVAILABLE_BUSINESSES)!=null)
-                                    System.getenv(LOCAL_APP_AVAILABLE_BUSINESSES).split(",").toSet()
-                                else configFactory.getString(APP_AVAILABLE_BUSINESSES).split(",").toSet(),
+                businesses = acceptedBusinessNames,
                 region = System.getenv(LOCAL_AWS_REGION) ?: configFactory.getString(AWS_REGION),
                 accessKeyId = System.getenv(LOCAL_AWS_ACCESS_KEY_ID) ?: configFactory.getString(AWS_ACCESS_KEY_ID),
                 secretAccessKey = System.getenv(LOCAL_AWS_SECRET_ACCESS_KEY) ?: configFactory.getString(AWS_SECRET_ACCESS_KEY),
@@ -62,7 +132,7 @@ val appModule = DI.Module("appModule") {
         singleton {  SignIn(instance(), instance(), instance()) }
     }
     bind<Function> (tag="validate") {
-        singleton {  Validate(instance(), instance(), instance()) }
+        singleton {  Validate(instance(), instance()) }
     }
     bind<Function> (tag="recovery") {
         singleton {  PasswordRecovery(instance(), instance(), instance()) }
@@ -71,13 +141,20 @@ val appModule = DI.Module("appModule") {
         singleton {  ConfirmPasswordRecovery(instance(), instance(), instance()) }
     }
     bind<Function> (tag="profiles") {
-        singleton {  Profiles(instance(), instance(), instance()) }
+        singleton {  Profiles(instance(), instance()) }
     }
     bind<Function> (tag="2fasetup") {
-        singleton {  TwoFactorSetup(instance(), instance(), instance()) }
+        singleton {  TwoFactorSetup(instance(), instance(), instance(), instance()) }
     }
     bind<Function> (tag="2faverify") {
-        singleton {  TwoFactorVerify(instance(), instance(), instance()) }
+        singleton {  TwoFactorVerify(instance(), instance(), instance(), instance()) }
     }
-
+    bind<Function> (tag="registerBusiness") {
+        singleton {  RegisterBusiness(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="reviewBusiness") {
+        singleton {  ReviewBusinessRegistration(instance(), instance(), instance("2faverify"),
+            instance("signup"), instance(),
+            instance(), instance(),instance()) }
+    }
 }

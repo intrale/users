@@ -1,23 +1,15 @@
 package ar.com.intrale
 
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminGetUserRequest
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminInitiateAuthRequest
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminRespondToAuthChallengeRequest
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminUpdateUserAttributesRequest
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AttributeType
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.*
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.AuthFlowType.AdminNoSrpAuth
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.ChallengeNameType.NewPasswordRequired
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.NotAuthorizedException
-import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
 import com.google.gson.Gson
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
-import net.datafaker.Faker
 import org.slf4j.Logger
 
-class SignIn(val config: UsersConfig, val faker: Faker, val logger: Logger) : Function {
+class SignIn(val config: UsersConfig, val logger: Logger, val cognito: CognitoIdentityProviderClient) : Function {
 
 
     fun requestValidation(body:SignInRequest): Response? {
@@ -50,13 +42,7 @@ class SignIn(val config: UsersConfig, val faker: Faker, val logger: Logger) : Fu
         // Se intenta realizar el signin normalmente contra el proveedor de autenticacion
         try {
             logger.info("Se intenta realizar el signin normalmente contra el proveedor de autenticacion")
-            CognitoIdentityProviderClient {
-                region = config.region
-                credentialsProvider = StaticCredentialsProvider(Credentials(
-                    accessKeyId = config.accessKeyId,
-                    secretAccessKey = config.secretAccessKey
-                ))
-            }.use { identityProviderClient ->
+            cognito.use { identityProviderClient ->
                 var authResponse = identityProviderClient.adminInitiateAuth(
                     AdminInitiateAuthRequest {
                         authFlow = AdminNoSrpAuth

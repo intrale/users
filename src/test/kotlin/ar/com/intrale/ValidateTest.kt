@@ -22,7 +22,7 @@ class ValidateTest {
 
     @Test
     fun returnsOk() = runBlocking {
-        val validate = Validate(config, faker, logger)
+        val validate = Validate(config, logger)
         val response = validate.securedExecute("", "", emptyMap(), "")
         assertEquals(HttpStatusCode.OK, response.statusCode)
     }

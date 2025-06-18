@@ -1,18 +1,11 @@
 package ar.com.intrale
 
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminCreateUserRequest
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminGetUserRequest
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminUpdateUserAttributesRequest
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.AttributeType
-import aws.sdk.kotlin.services.cognitoidentityprovider.model.UsernameExistsException
-import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.*
 import com.google.gson.Gson
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.pattern
-import net.datafaker.Faker
 import org.slf4j.Logger
 
 const val PROFILE_ATT_NAME = "profile"
@@ -20,7 +13,7 @@ const val BUSINESS_ATT_NAME = "locale"
 const val EMAIL_ATT_NAME = "email"
 const val DEFAULT_PROFILE = "DEFAULT"
 
-open class SignUp (open val config: UsersConfig, open val faker: Faker, open val logger: Logger): Function {
+open class SignUp (open val config: UsersConfig, open val logger: Logger, open val cognito: CognitoIdentityProviderClient): Function {
 
     open fun getProfile() : String {
         return DEFAULT_PROFILE
@@ -64,13 +57,7 @@ open class SignUp (open val config: UsersConfig, open val faker: Faker, open val
             })
 
             try {
-                CognitoIdentityProviderClient {
-                    region = config.region
-                    credentialsProvider = StaticCredentialsProvider(Credentials(
-                        accessKeyId = config.accessKeyId,
-                        secretAccessKey = config.secretAccessKey
-                    ))
-                }.use { identityProviderClient ->
+                cognito.use { identityProviderClient ->
                     try {
                         logger.info("Creamos el usuario")
                         identityProviderClient.adminCreateUser(

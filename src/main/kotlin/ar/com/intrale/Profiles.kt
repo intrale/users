@@ -13,7 +13,7 @@ const val PROFILE_SALER = "Saler"
 
 const val PROFILE_CLIENT = "Client"
 
-class Profiles(override val config: UsersConfig, val faker: Faker, override val logger: Logger) :
+class Profiles(override val config: UsersConfig, override val logger: Logger) :
     SecuredFunction(config=config, logger=logger ) {
     override suspend fun securedExecute(
         business: String,

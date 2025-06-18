@@ -1,23 +1,14 @@
 package ar.com.intrale
 
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
 import aws.sdk.kotlin.services.cognitoidentityprovider.getUser
-import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
-import net.datafaker.Faker
 import org.apache.commons.codec.binary.Base32
 import org.slf4j.Logger
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema
-import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import java.security.SecureRandom
-import kotlin.math.log
 
-class TwoFactorSetup (override val config: UsersConfig, val faker: Faker, override val logger: Logger) :
+class TwoFactorSetup (override val config: UsersConfig, override val logger: Logger, val cognito: CognitoIdentityProviderClient, val tableUsers: DynamoDbTable<User>) :
     SecuredFunction(config=config, logger=logger ) {
-
 
         override suspend fun securedExecute(
         business: String,
@@ -27,33 +18,14 @@ class TwoFactorSetup (override val config: UsersConfig, val faker: Faker, overri
     ): Response {
             logger.debug("starting two factor setup $function")
 
-            val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
-                .region(Region.of(config.region))
-                .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(AwsBasicCredentials.create(config.accessKeyId, config.secretAccessKey)))
-                .build()
-
-            logger.debug("dynamoDbClient ok")
-            val enhancedClient = DynamoDbEnhancedClient.builder()
-                .dynamoDbClient(dynamoDbClient)
-                .build()
-
-            logger.debug("enhancedClient ok")
-            val table = enhancedClient.table("users", TableSchema.fromBean(User::class.java))
-
             logger.debug("checking accessToken")
-            CognitoIdentityProviderClient {
-                region = config.region
-                credentialsProvider = StaticCredentialsProvider(Credentials(
-                    accessKeyId = config.accessKeyId,
-                    secretAccessKey = config.secretAccessKey
-                ))
-            }.use { identityProviderClient ->
+            cognito.use { identityProviderClient ->
                 val response = identityProviderClient.getUser {
                     this.accessToken = headers["Authorization"]
                 }
 
                 logger.debug("trying to get user $response")
-                val email = response.userAttributes?.firstOrNull { it.name == "email" }?.value
+                val email = response.userAttributes?.firstOrNull { it.name == EMAIL_ATT_NAME }?.value
                 val username = response.username
                 val secret = generateSecret()
 
@@ -63,7 +35,7 @@ class TwoFactorSetup (override val config: UsersConfig, val faker: Faker, overri
                         secret = secret
                     )
                     logger.debug("persisting user $user")
-                    table.putItem(user)
+                    tableUsers.putItem(user)
                 } else {
                     logger.error("failed to get user")
                     return ExceptionResponse("Email not found")
