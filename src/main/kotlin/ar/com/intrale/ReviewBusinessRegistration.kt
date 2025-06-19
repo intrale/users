@@ -27,6 +27,10 @@ class ReviewBusinessRegistration (val config: UsersConfig, val logger: Logger,
                                   val tableProfiles: DynamoDbTable<UserBusinessProfile>) :
     Function {
 
+    private fun notifyBusinessAvailable(email: String, business: String) {
+        logger.info("Negocio $business aprobado. Se notific\u00f3 a $email")
+    }
+
 
     fun requestValidation(body:ReviewBusinessRegistrationRequest): Response? {
         val validation = Validation<ReviewBusinessRegistrationRequest> {
@@ -125,7 +129,7 @@ class ReviewBusinessRegistration (val config: UsersConfig, val logger: Logger,
                 tableProfiles.putItem (userBusinessProfile)
 
                 // Informar al usuario que ya se encuentra disponible su negocio
-                //TODO: Informar al usuario que ya se encuentra disponible su negocio
+                notifyBusinessAvailable(businessData.emailAdmin!!, business)
 
             } else {
                 businessData.state = BusinessState.REJECTED
