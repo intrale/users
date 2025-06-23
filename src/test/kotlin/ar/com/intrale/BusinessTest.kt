@@ -1,5 +1,7 @@
 import ar.com.intrale.Business
 import ar.com.intrale.BusinessState
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,5 +24,18 @@ class BusinessTest {
         assertEquals("admin@biz.com", business.emailAdmin)
         assertEquals("desc", business.description)
         assertEquals(BusinessState.APPROVED, business.state)
+    }
+
+    @Test
+    fun hasDynamoDbBeanAnnotation() {
+        val annotation = Business::class.java.getAnnotation(DynamoDbBean::class.java)
+        assertEquals(true, annotation != null)
+    }
+
+    @Test
+    fun namePropertyIsPartitionKey() {
+        val getter = Business::class.java.getMethod("getName")
+        val annotation = getter.getAnnotation(DynamoDbPartitionKey::class.java)
+        assertEquals(true, annotation != null)
     }
 }
