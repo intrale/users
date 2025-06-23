@@ -164,4 +164,7 @@ val appModule = DI.Module("appModule") {
             instance("signup"), instance(),
             instance(), instance(),instance()) }
     }
+    bind<Function> (tag="assignProfile") {
+        singleton { AssignProfile(instance(), instance(), instance(), instance()) }
+    }
 }
