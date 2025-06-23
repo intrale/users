@@ -17,6 +17,7 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import ar.com.intrale.ChangePassword
 
 private const val LOCAL_APP_AVAILABLE_BUSINESSES = "AVAILABLE_BUISNESS"
 private const val LOCAL_AWS_REGION = "REGION_VALUE"
@@ -130,6 +131,9 @@ val appModule = DI.Module("appModule") {
     }
     bind<Function> (tag="signupDelivery") {
         singleton  { SignUpDelivery(instance(), instance(), instance()) }
+    }    
+    bind<Function> (tag="signupSaler") {
+        singleton  { SignUpSaler(instance(), instance(), instance()) }
     }
     bind<Function> (tag="signin") {
         singleton {  SignIn(instance(), instance(), instance()) }
@@ -142,6 +146,9 @@ val appModule = DI.Module("appModule") {
     }
     bind<Function> (tag="confirm") {
         singleton {  ConfirmPasswordRecovery(instance(), instance(), instance()) }
+    }
+    bind<Function> (tag="changePassword") {
+        singleton {  ChangePassword(instance(), instance(), instance()) }
     }
     bind<Function> (tag="profiles") {
         singleton {  Profiles(instance(), instance()) }
@@ -159,5 +166,8 @@ val appModule = DI.Module("appModule") {
         singleton {  ReviewBusinessRegistration(instance(), instance(), instance("2faverify"),
             instance("signup"), instance(),
             instance(), instance(),instance()) }
+    }
+    bind<Function> (tag="assignProfile") {
+        singleton { AssignProfile(instance(), instance(), instance(), instance()) }
     }
 }
