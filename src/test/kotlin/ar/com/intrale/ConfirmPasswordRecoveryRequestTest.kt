@@ -2,17 +2,6 @@ package ar.com.intrale
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-<<<<<<< HEAD
-
-class ConfirmPasswordRecoveryRequestTest {
-    @Test
-    fun `constructor sets values`() {
-        val req = ConfirmPasswordRecoveryRequest("user@test.com", "code", "pass")
-        assertEquals("user@test.com", req.email)
-        assertEquals("code", req.code)
-        assertEquals("pass", req.password)
-    }
-=======
 import kotlin.test.assertNotEquals
 
 class ConfirmPasswordRecoveryRequestTest {
@@ -40,5 +29,4 @@ class ConfirmPasswordRecoveryRequestTest {
         assertEquals(req.email, copy.email)
         assertEquals(req.code, copy.code)
     }
->>>>>>> 96b8290 ([auto][test] Pruebas unitarias para ConfirmPasswordRecoveryRequest)
 }
