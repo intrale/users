@@ -27,4 +27,18 @@ class AssignProfileRequestTest {
         assertEquals("ADMIN", copy.profile)
         assertEquals(req.email, copy.email)
     }
+
+    @Test
+    fun `objetos con diferente email no son iguales`() {
+        val req1 = AssignProfileRequest("user@test.com", "CLIENT")
+        val req2 = AssignProfileRequest("other@test.com", "CLIENT")
+        assertNotEquals(req1, req2)
+    }
+
+    @Test
+    fun `toString refleja los valores`() {
+        val req = AssignProfileRequest("user@test.com", "CLIENT")
+        val esperado = "AssignProfileRequest(email=user@test.com, profile=CLIENT)"
+        assertEquals(esperado, req.toString())
+    }
 }
