@@ -129,6 +129,9 @@ val appModule = DI.Module("appModule") {
     bind<Function> (tag="signupPlatformAdmin") {
         singleton  { SignUpPlatformAdmin(instance(), instance(), instance()) }
     }
+    bind<Function> (tag="signupSaler") {
+        singleton  { SignUpSaler(instance(), instance(), instance()) }
+    }
     bind<Function> (tag="signin") {
         singleton {  SignIn(instance(), instance(), instance()) }
     }
