@@ -2,6 +2,7 @@ package ar.com.intrale
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class ChangePasswordRequestTest {
     @Test
