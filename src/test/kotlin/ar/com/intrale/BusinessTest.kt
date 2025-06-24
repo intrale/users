@@ -4,6 +4,9 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.reflect.full.findAnnotation
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
 class BusinessTest {
     @Test
@@ -37,5 +40,11 @@ class BusinessTest {
         val getter = Business::class.java.getMethod("getName")
         val annotation = getter.getAnnotation(DynamoDbPartitionKey::class.java)
         assertEquals(true, annotation != null)
+    }
+    
+    @Test
+    fun namePropertyHasPartitionKeyAnnotation() {
+        val annotation = Business::name.getter.findAnnotation<DynamoDbPartitionKey>()
+        assertNotNull(annotation)
     }
 }
