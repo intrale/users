@@ -1,3 +1,4 @@
+package ar.com.intrale
 import ar.com.intrale.BusinessState
 import kotlin.test.Test
 import kotlin.test.assertEquals

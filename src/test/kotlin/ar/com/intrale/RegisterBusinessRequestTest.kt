@@ -13,7 +13,7 @@ class RegisterBusinessRequestTest {
         assertEquals("desc", req.description)
     }
 
-    @Test
+  @Test
     fun `objetos iguales tienen igualdad estructural`() {
         val req1 = RegisterBusinessRequest("Biz", "admin@biz.com", "desc")
         val req2 = RegisterBusinessRequest("Biz", "admin@biz.com", "desc")
