@@ -13,4 +13,12 @@ class ProfilesResponseTest {
         assertTrue(resp.profiles.contentEquals(profiles))
         assertEquals(HttpStatusCode.OK, resp.statusCode)
     }
+    @Test
+    fun `mantiene el orden de los perfiles`() {
+        val profiles = arrayOf(Profile("Uno"), Profile("Dos"), Profile("Tres"))
+        val resp = ProfilesResponse(profiles)
+        resp.profiles.forEachIndexed { index, profile ->
+            assertEquals(profiles[index], profile)
+        }
+    }
 }
