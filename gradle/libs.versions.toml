@@ -83,6 +83,9 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 # Ktor Rate Limit
 ktor-server-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version.ref = "ktor-server-rate-limiting" }
 
+ktor-server-tests = { module = "io.ktor:ktor-server-tests", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+
 [plugins]
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
