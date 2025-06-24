@@ -3,6 +3,7 @@ import ar.com.intrale.BusinessState
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 import kotlin.test.assertNotNull
 import kotlin.reflect.full.findAnnotation
 
