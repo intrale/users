@@ -65,6 +65,17 @@ repositories {
 
 dependencies {
 
+    // Testing
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.mockk)
+
+    //testImplementation("io.ktor:ktor-server-test-host-jvm")
+    testImplementation(libs.ktor.server.tests)
+    testImplementation(libs.ktor.client.mock)
+    testImplementation(libs.ktor.client.core)
+    testImplementation(libs.ktor.client.cio)
+    testImplementation(libs.ktor.client.content.negotiation)
+
     // Backend
     implementation(libs.backend)
 
@@ -73,13 +84,6 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-gson-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
-
-    testImplementation("io.ktor:ktor-server-test-host-jvm")
-    testImplementation(libs.ktor.server.tests)
-    testImplementation(libs.ktor.client.mock)
-
-    testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.mockk)
 
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.rate.limiting)
@@ -118,7 +122,6 @@ dependencies {
     implementation("software.amazon.awssdk:dynamodb-enhanced:2.25.28")
     implementation("software.amazon.awssdk:auth:2.25.28")
     implementation("software.amazon.awssdk:regions:2.25.28")
-
 
     // Two Factor
     implementation("com.eatthepath:java-otp:0.4.0")
