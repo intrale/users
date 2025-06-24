@@ -19,4 +19,11 @@ class BusinessStateTest {
         assertEquals(BusinessState.APPROVED, BusinessState.valueOf("APPROVED"))
         assertEquals(BusinessState.REJECTED, BusinessState.valueOf("REJECTED"))
     }
+
+    @Test
+    fun toStringMatchesName() {
+        BusinessState.values().forEach {
+            assertEquals(it.name, it.toString())
+        }
+    }
 }
