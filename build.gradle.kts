@@ -76,6 +76,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.mockk)
 
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.rate.limiting)

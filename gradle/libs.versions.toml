@@ -39,6 +39,7 @@ ktor-server-rate-limiting = "1.2.10"
 
 # Shadow
 shadow = "8.1.1"
+mockk = "1.13.10"
 
 
 [libraries]
@@ -77,6 +78,7 @@ datafaker = { module = "net.datafaker:datafaker", version.ref = "datafaker" }
 # JWT
 java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }
 jwks-rsa = { module = "com.auth0:jwks-rsa", version.ref = "jwks-rsa" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # Ktor Rate Limit
 ktor-server-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version.ref = "ktor-server-rate-limiting" }
