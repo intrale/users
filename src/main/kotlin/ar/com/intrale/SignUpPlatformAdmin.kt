@@ -2,6 +2,7 @@ package ar.com.intrale
 
 import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.ListUsersRequest
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.UnauthorizedException
 import org.slf4j.Logger
 import kotlin.math.log
 
@@ -31,7 +32,7 @@ class SignUpPlatformAdmin(override val config: UsersConfig, override val logger:
            }
         }
         logger.warn("UnauthorizeExeption")
-        return UnauthorizeExeption()
+        return UnauthorizedException()
     }
 
 

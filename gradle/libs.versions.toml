@@ -3,7 +3,7 @@
 kotlin="2.0.20"
 
 # Backend
-backend = "0.4.0"
+backend = "0.23.0"
 
 # AWS
 com-amazonaws-aws-lambda-java-core = "1.2.1"
@@ -32,7 +32,7 @@ java-jwt = "4.4.0"
 jwks-rsa = "0.22.0"
 
 # Ktor
-ktor = "2.3.12"
+ktor = "2.3.9"
 
 # Ktor Rate Limit
 ktor-server-rate-limiting = "1.2.10"

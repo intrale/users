@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import org.slf4j.Logger
-import ar.com.intrale.UnauthorizeExeption
+import ar.com.intrale.UnauthorizedException
 
 class ChangePassword(
     override val config: UsersConfig,
@@ -48,7 +48,7 @@ class ChangePassword(
 
         val token = headers["Authorization"]
         if (token.isNullOrBlank()) {
-            return UnauthorizeExeption()
+            return UnauthorizedException()
         }
 
         try {
@@ -64,7 +64,7 @@ class ChangePassword(
             }
         } catch (e: NotAuthorizedException) {
             logger.error("Error al cambiar contraseña: ${e.message}", e)
-            return UnauthorizeExeption()
+            return UnauthorizedException()
         } catch (e: Exception) {
             logger.error("Error al cambiar contraseña: ${e.message}", e)
             return ExceptionResponse(e.message ?: "Internal Server Error")

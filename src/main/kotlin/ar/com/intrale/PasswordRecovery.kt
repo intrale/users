@@ -11,6 +11,7 @@ import aws.sdk.kotlin.services.cognitoidentityprovider.model.AuthFlowType.AdminN
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.ChallengeNameType.NewPasswordRequired
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.ForgotPasswordRequest
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.NotAuthorizedException
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.UnauthorizedException
 import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
 import com.google.gson.Gson
 import io.konform.validation.Validation
@@ -65,7 +66,7 @@ class PasswordRecovery(val config: UsersConfig, val logger: Logger, val cognito:
             }
         } catch (e: NotAuthorizedException) {
             logger.error("Error al consultar Cognito: ${e.message}", e)
-            return UnauthorizeExeption()
+            return UnauthorizedException()
         } catch (e: Exception) {
             logger.error("Error al consultar Cognito: ${e.message}", e)
             return ExceptionResponse(e.message ?: "Internal Server Error")

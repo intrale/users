@@ -77,7 +77,7 @@ class ReviewBusinessRegistration (val config: UsersConfig, val logger: Logger,
                 val profile = response.userAttributes?.firstOrNull { it.name == PROFILE_ATT_NAME }?.value
 
                 if (PLATFORM_ADMIN_PROFILE != profile) {
-                    return UnauthorizeExeption()
+                    return UnauthorizedException()
                 }
 
                 // Validar el segundo factor para ese usuario

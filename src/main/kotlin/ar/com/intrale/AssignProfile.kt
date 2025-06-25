@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import io.konform.validation.jsonschema.pattern
 import org.slf4j.Logger
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
+import ar.com.intrale.UnauthorizedException
 
 class AssignProfile(
     override val config: UsersConfig,
@@ -55,7 +56,7 @@ class AssignProfile(
             }
             val profile = response.userAttributes?.firstOrNull { it.name == PROFILE_ATT_NAME }?.value
             if (PLATFORM_ADMIN_PROFILE != profile) {
-                return UnauthorizeExeption()
+                return UnauthorizedException()
             }
         }
 

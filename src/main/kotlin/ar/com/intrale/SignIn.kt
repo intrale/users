@@ -121,7 +121,7 @@ class SignIn(val config: UsersConfig, val logger: Logger, val cognito: CognitoId
                 val businesses = user.userAttributes?.find { it.name == BUSINESS_ATT_NAME }?.value
                 logger.info("businesses: $businesses")
                 if (businesses?.contains(business) == false){
-                    return UnauthorizeExeption()
+                    return UnauthorizedException()
                 }
 
                 logger.info("retornando tokens")
@@ -134,7 +134,7 @@ class SignIn(val config: UsersConfig, val logger: Logger, val cognito: CognitoId
             }
         } catch (e: NotAuthorizedException) {
             logger.error("Error al consultar Cognito: ${e.message}", e)
-            return UnauthorizeExeption()
+            return UnauthorizedException()
         } catch (e: Exception) {
             logger.error("Error al consultar Cognito: ${e.message}", e)
             return ExceptionResponse(e.message ?: "Internal Server Error")
