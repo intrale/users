@@ -1,19 +1,23 @@
 [versions]
 # Kotlin
-kotlin="2.0.20"
+kotlin = "1.9.24"
+
+# Coroutines
+kotlinx-coroutines = "1.7.3"
 
 # Backend
-backend = "0.23.0"
+backend = "0.24.0"
 
 # AWS
 com-amazonaws-aws-lambda-java-core = "1.2.1"
 com-amazonaws-aws-lambda-java-events = "3.11.4"
 com-amazonaws-aws-lambda-java-log4j = "1.0.1"
+
 # AWS Cognito
-aws-sdk-kotlin-cognito="1.2.28"
+aws-sdk-kotlin-cognito = "1.2.28"
 
 # logback
-logback-classic="1.5.18"
+logback-classic = "1.5.18"
 
 # serialization
 kotlinx-serialization-json = "1.7.3"
@@ -41,13 +45,13 @@ ktor-server-rate-limiting = "1.2.10"
 shadow = "8.1.1"
 mockk = "1.13.10"
 
-
 [libraries]
 # Backend
 backend = { module = "ar.com.intrale:backend", version.ref = "backend" }
 
 # Kotlin
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 
 # AWS
 aws-lambda-java-core = { module = "com.amazonaws:aws-lambda-java-core", version.ref = "com-amazonaws-aws-lambda-java-core" }
